@@ -17,36 +17,61 @@ Users will be notified of an issue with the error message printed to the Matlab 
 
 **Input**
 
-data_folder          = path to data folder  containing raw svc scan files (required input)
-wavelength_column    = column number for wavelength values (e.g., 1)
-radiance_column      = column number for radiance values (e.g., 5) 
-time_diff            = number of minutes used to define a station
-qf_lower             = lower threshold used to flag potential quality issues if fewer scans for a particular scan type are acquired      
-qf_upper             = upper threshold used to flag potential quality issues if more scans for a particular scan type are acquired 
-rho                  = constant accounting for skylight (0.028=standard, Mobley 1999)
-Rg                   = plaque reflectance value (0.99)
-min_null_lam         = minimum wavelength for range used to null correct reflectance (e.g., 900 nm in coastal waters)
-max_null_lam         = maximum wavelength for range used to null correct reflectance (e.g., 950 nm in coastal waters)
+*data_folder* = path to data folder  containing raw svc scan files (required input)
+
+*wavelength_column* = column number for wavelength values (e.g., 1)
+
+*radiance_column* = column number for radiance values (e.g., 5)
+
+*time_diff* = number of minutes used to define a station
+
+*qf_lower* = lower threshold used to flag potential quality issues if fewer scans for a particular scan type are acquired
+
+*qf_upper* = upper threshold used to flag potential quality issues if more scans for a particular scan type are acquired
+
+*rho* = constant accounting for skylight (0.028=standard, Mobley 1999)
+
+*Rg* = plaque reflectance value (0.99)
+
+*min_null_lam* = minimum wavelength for range used to null correct reflectance (e.g., 900 nm in coastal waters)
+
+*max_null_lam* = maximum wavelength for range used to null correct reflectance (e.g., 950 nm in coastal waters)
+
 
 **Output**
 
-*svc_output* = structure containing fields as follows:
+**svc_output** = structure containing fields as follows:
 
-latitude             = average latitude across all scans defined for a single station (from time threshold)
-longitude            = average longitude across all scans defined for a single station (from time threshold)
-quality_flag         = 0 if scans passed quality test, 1 if scans failed quality test
-water_lam            = water scan wavelengths
-water_rad            = water scan radiance values
-water_files          = water source file name(s)
-sky_lam              = sky scan wavelengths
-sky_rad              = sky scan radiance values
-sky_files            = sky source file name(s)
-ref_lam              = ref scan wavelengths
-ref_rad              = ref scan radiance values
-ref_files            = ref source file name(s)
-Rrs_lam              = wavelengths corresponding to calculated Rrs values
-Rrs                  = Rrs calculated using Eq. 6, Mobley 1999
-Rrs_offset           = Rrs calculated using Eq. 7, Mobley 1999
+*latitude* = average latitude across all scans defined for a single station (from time threshold)
+
+*longitude* = average longitude across all scans defined for a single station (from time threshold)
+
+*quality_flag* = 0 if scans passed quality test, 1 if scans failed quality test
+
+*water_lam* = water scan wavelengths
+
+*water_rad* = water scan radiance values
+
+*water_files* = water source file name(s)
+
+*sky_lam* = sky scan wavelengths
+
+*sky_rad* = sky scan radiance values
+
+*sky_files* = sky source file name(s)
+
+*ref_lam* = ref scan wavelengths
+
+*ref_rad* = ref scan radiance values
+
+*ref_files* = ref source file name(s)
+
+*Rrs_lam* = wavelengths corresponding to calculated Rrs values
+
+*Rrs* = Rrs calculated using Eq. 6, Mobley 1999
+
+*Rrs_offset* = Rrs calculated using Eq. 7, Mobley 1999
+
 
 ## Example Code to Run Function
 
