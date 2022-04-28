@@ -1,0 +1,17 @@
+cff-version: 2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Grunert"
+  given-names: "Brice"
+  orcid: "https://orcid.org/0000-0002-6951-1701"
+- family-names: "Turner"
+  given-names: "Kyle"
+  orcid: "https://orcid.org/0000-0002-3682-1500"
+- family-names: "Tzortziou"
+  given-names: "Maria"
+  orcid: "https://orcid.org/0000-0002-4510-7827"
+title: "process_svc"
+version: 2.0
+doi: 10.5281/zenodo.6499619
+date-released: 2022-04-27
+url: "https://github.com/bricegrunert/process_svc"
