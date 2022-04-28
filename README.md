@@ -1,112 +1,38 @@
-# process_svc
-Function to process raw Spectra Vista Corporation radiance into remotely-sensed reflectance.
+# process_svc_v2.0
 
-The **process_svc** function reads in raw above-water radiometry data, sorts spectra into a unique station based on a time threshold (e.g. 15 minutes), clusters spectra to automatically classify as reference, sky or water spectra, identifies outliers and discards, then calculates mean radiance for each scan type. A flag is generated to indicate suspect spectra that do not meet an expected number of quality spectra (e.g., 3 out of 5 spectra identified as good). Using QAQC’d data, remotely-sensed reflectance is calculated using either a user defined or default rho value from *Mobley et al. 1999*. Remotely-sensed reflectance with an applied offset is also calculated based on a user defined or default wavelength range, where remotely-sensed reflectance is assumed to be 0 within this wavelength range, and the average remotely-sensed reflectance value is estimated for this wavelength range and subtracted from the entire spectra. Final output is a Matlab data structure.
+## Brief Description
+This package was built to read in raw above-water radiometry data collected by a Spectra Vista Corporation (SVC) HR-512i spectroradiometer. The package consists of 4 core MATLAB functions and the three component (3C) Python model produced by Groetsch et al. 2017 and available on Philipp Grötsch’s GitLab page (rrs_model_3C). The packages are designed to read in SVC files (.sig) that include raw radiance scans, and through several functions generate quality controlled remote-sensing reflectance (*Rrs*) spectra. Specific components of each function are described in the header information (comments) of each .m file. The four MATLAB functions are as follows:
 
-Currently, the function auto-populations up to 15 columns of data. If the data file has more columns of data than this, and the wavelength or radiance data is in a column number greater than 15, the user will need to add additional variable names to the ‘col_names’ variable within the function. To add names, users will simply add “ ,’Var#’ “ to the character string, where # indicates the number. So, the first number added would be ‘Var16’, as in the example below:
+## process_svc_readfiles.m
+Files are read into MATLAB and unique stations are identified through *k*-means clustering of datetime, latitude and longitude data and a user-specified number of stations. Then, radiance scans for each station are sorted using *k*-means clustering of the integral of each scan into reference plaque, sky and water scans. A data structure is generated with each element of the structure corresponding to a unique station.
 
-    col_names={'Var1','Var2','Var3','Var4','Var5','Var6','Var7','Var8','Var9','Var10','Var11','Var12','Var13','Var14','Var15'};
+Users should check that scans are properly sorted, particularly for sub-optimal (cloudy) conditions where sky and reference plaque scans are often of similar magnitude and spectral shape (and thus often intermingled during sorting).
 
-becomes
+## process_svc_rrs.m
+The data structure generated from *process_svc_readfiles.m* is used, along with a rho and Rg value (see Mobley 1999) as input variables. Radiance scans are quality controlled using an outlier analysis, with outliers determined as anything greater than 3 median absolute deviations from the median. Outliers are identified as any spectra with more than 25 wavelengths identified as individual outliers. Quality scans are kept, and ‘Mobley’ Rrs values are calculated using Eq. 6 of Mobley 1999.
 
-    col_names={'Var1','Var2','Var3','Var4','Var5','Var6','Var7','Var8','Var9','Var10','Var11','Var12','Var13','Var14','Var15',’Var16};
+## process_svc_3Cinput.m
+The data structure generated from *process_svc_rrs.m* is used as input, along with the path (location) to write .csv data files, station IDs and header information used by 3C (e.g., Rg, secchi, wind speed). This function does not provide any data processing or analysis, it only renders input files in the appropriate format for the *3C_process_svc.py* script. An important note on station IDs – this function will run without them, and auto-generate a generic ID in numeric order. We highly recommend providing your own to easily link this data back to your other datasets.
 
-Users will be notified of an issue with the error message printed to the Matlab console, lines 91-97 of the **process_svc** function.
+## process_svc_3Coutput.m
+The data structure generated from *process_svc_rrs.m* is used as input, along with the location of the output files generated from the *3C_process_svc.py* script and station IDs (again, will resort to generic IDs if none are provided). This function does not provide any data processing or analysis, it only populates the data structure with 3C generated Rrs spectra, matched to the corresponding station ID.
 
-## Input and Output
+## Inputs and Outputs
+Inputs and outputs are defined as part of each function and can be viewed with *help ‘function_name’* in the MATLAB console (be sure to add the functions to your MATLAB directory).
 
-**Input**
+## Notes
+The original 3C repository from GitLab is included in the provided files, consistent with its license (GNU Lesser General Public License v3.0). Users will need to set up their Python environment to work with 3C. There are many great resources for how to do this online, and we will not profess to be one of them. We have found Spyder to be the most intuitive for running the Python scripts, consistent with our MATLAB heritage. If you do have questions about basic setup and getting this code working, please do not hesitate to reach out – our contact info is below.
 
-*data_folder* = path to data folder  containing raw svc scan files (required input)
+## Questions?
+Contact Brice Grunert (b.grunert@csuohio.edu) or Kyle Turner (k.turner00@ccny.cuny.edu).
 
-*wavelength_column* = column number for wavelength values (e.g., 1)
+## Acknowledgements
+A huge thank you to Philipp Grötsch for answering too many questions and supporting implementation of this package (and also for being a rad dude).
 
-*radiance_column* = column number for radiance values (e.g., 5)
+## References
+Groetsch, P. M., Gege, P., Simis, S. G., Eleveld, M. A., & Peters, S. W. (2017). Validation of a spectral correction procedure for sun and sky reflections in above-water reflectance measurements. Optics Express, 25(16), A742-A761.
 
-*time_diff* = number of minutes used to define a station
+Groetsch, Philipp. (2017). Python implementation of the 3C Water Surface Reflection Model. Zenodo. https://doi.org/10.5281/zenodo.293851
 
-*qf_lower* = lower threshold used to flag potential quality issues if fewer scans for a particular scan type are acquired
+Mobley, C. D. (1999). Estimation of the remote-sensing reflectance from above-surface measurements. Applied optics, 38(36), 7442-7455.
 
-*qf_upper* = upper threshold used to flag potential quality issues if more scans for a particular scan type are acquired
-
-*rho* = constant accounting for skylight (0.028=standard, Mobley 1999)
-
-*Rg* = plaque reflectance value (0.99)
-
-*min_null_lam* = minimum wavelength for range used to null correct reflectance (e.g., 900 nm in coastal waters)
-
-*max_null_lam* = maximum wavelength for range used to null correct reflectance (e.g., 950 nm in coastal waters)
-
-
-**Output**
-
-**svc_output** = structure containing fields as follows:
-
-*latitude* = average latitude across all scans defined for a single station (from time threshold)
-
-*longitude* = average longitude across all scans defined for a single station (from time threshold)
-
-*quality_flag* = 0 if scans passed quality test, 1 if scans failed quality test
-
-*water_lam* = water scan wavelengths
-
-*water_rad* = water scan radiance values
-
-*water_files* = water source file name(s)
-
-*sky_lam* = sky scan wavelengths
-
-*sky_rad* = sky scan radiance values
-
-*sky_files* = sky source file name(s)
-
-*ref_lam* = ref scan wavelengths
-
-*ref_rad* = ref scan radiance values
-
-*ref_files* = ref source file name(s)
-
-*Rrs_lam* = wavelengths corresponding to calculated Rrs values
-
-*Rrs* = Rrs calculated using Eq. 6, Mobley 1999
-
-*Rrs_offset* = Rrs calculated using Eq. 7, Mobley 1999
-
-
-## Example Code to Run Function
-
-    data_folder='~/MyComputer/MyData/SVC_data/scans/';
- 
-    svc=process_svc(data_folder,15,3,5,0.028,0.99,900,950);
-
-## Example Code to Plot Results
-
-    figure;
-    plot(svc(1).Rrs_lam,svc(1).Rrs,'-k')
-    set(gca,'XLim',[min(svc(1).Rrs_lam) max(svc(1).Rrs_lam)],'fontsize',16,'fontname','times new roman')
-    xlabel('Wavelength (nm)')
-    ylabel('R_{rs} (sr^{-1})')
-
-## Example Code to Select All Spectra from July
-
-Note: svc is a structure, so above, we’re calling the first element of that structure to plot. We can make this more complicated by:
-
-    % find all data from July and plot
-    for ii=1:length(svc)
-        if month(svc(ii).datetime)==7 && svc(ii).quality_flag==0
-            ind(ii)=1;
-        else
-            ind(ii)=0;
-        end
-    end
-
-    ind=find(ind==1);
-
-    figure;
-    for ii=1:length(ind)
-        hold on;
-        plot(svc(ind(ii)).Rrs_lam,svc(ind(ii)).Rrs)
-    end
-    set(gca,'XLim',[min(svc(ind(1)).Rrs_lam) max(svc(ind(1)).Rrs_lam)],'fontsize',16,'fontname','times new roman')
-    xlabel('Wavelength (nm)')
-    ylabel('R_{rs} (sr^{-1})')
