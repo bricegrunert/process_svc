@@ -1,3 +1,16 @@
-Please cite this work as
-
-Brice Grunert, Kyle Turner, Maria Tzortziou (2022). bricegrunert/process_svc: v2.0 (v2.0). Zenodo. https://doi.org/10.5281/zenodo.6499619
+cff-version: 2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Grunert"
+  given-names: "Brice"
+  orcid: "https://orcid.org/0000-0002-6951-1701"
+- family-names: "Turner"
+  given-names: "Kyle"
+- family-names: "Tzortziou"
+  given-names: "Maria"
+  orcid: "https://orcid.org/0000-0002-4510-7827"
+title: "process_svc"
+version: 2.0
+doi: 10.5281/zenodo.6499619
+date-released: 2022-04-27
+url: "https://github.com/bricegrunert/process_svc"
