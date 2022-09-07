@@ -1,4 +1,4 @@
-# process_svc_v2.0
+# process_svc_v2.1
 
 ## Brief Description
 This package was built to read in raw above-water radiometry data collected by a Spectra Vista Corporation (SVC) HR-512i spectroradiometer. The package consists of 4 core MATLAB functions and the three component (3C) Python model produced by Groetsch et al. 2017 and available on Philipp Grötsch’s GitLab page (rrs_model_3C). The packages are designed to read in SVC files (.sig) that include raw radiance scans, and through several functions generate quality controlled remote-sensing reflectance (*Rrs*) spectra. Specific components of each function are described in the header information (comments) of each .m file. The four MATLAB functions are as follows:
